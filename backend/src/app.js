@@ -34,12 +34,14 @@ const moviesRouter = require('./routes/movies');
 const platformsRouter = require('./routes/platforms');
 const genreRouter = require('./routes/genre');
 const theatreRouter = require('./routes/theatre');
+const ratingRouter = require('./routes/rating');
 
 app.use('/users', usersRouter);
 app.use('/movies', moviesRouter);
 app.use('/platforms', platformsRouter);
 app.use('/genre', genreRouter);
 app.use('/theatres', theatreRouter);
+app.use('/rating', ratingRouter);
 
 const port = 9000;
 app.listen(port, () => {

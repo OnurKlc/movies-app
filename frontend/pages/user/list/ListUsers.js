@@ -31,7 +31,7 @@ const ListUsers = () => {
     }
 
     const filteredUsers = filterUserType
-        ? usersList.getValue().filter((user) => user.userType === filterUserType)
+        ? usersList.getValue().filter((user) => user.user_type === filterUserType)
         : usersList.getValue();
 
     const columns = [

@@ -19,9 +19,6 @@ const Dashboard = () => {
             {user.getValue()?.user_type === 'manager' && <Link href="/theatre/add" className={styles.button}>
                 Create A Theatre
             </Link>}
-            <Link href="/" className={styles.button} onClick={() => user.set(null)}>
-                Logout
-            </Link>
         </PrivateRoute>
     );
 };

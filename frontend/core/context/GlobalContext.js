@@ -1,10 +1,7 @@
 import { createContext, useState } from 'react';
-import axios from "axios";
 
-// Create the UserContext
 export const GlobalContext = createContext();
 
-// Create a UserProvider component to wrap your app
 export const UserProvider = ({ children }) => {
     const [user, setUser] = useState(null);
     const [users, setUsers] = useState([]);
