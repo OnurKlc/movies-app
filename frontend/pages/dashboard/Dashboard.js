@@ -1,13 +1,14 @@
 import Link from 'next/link';
+import styles from "./Dashboard.module.css"
+import PrivateRoute from "../PrivateRoute";
 import {useContext} from "react";
 import {GlobalContext} from "../../core/context/GlobalContext";
-import styles from "./Dashboard.module.css"
 
 const Dashboard = () => {
-    const {usersList} = useContext(GlobalContext)
+    const {user} = useContext(GlobalContext)
 
     return (
-        <div>
+        <PrivateRoute>
             <h1>Dashboard</h1>
             <Link href="/user/list" className={styles.button}>
                 View Users
@@ -15,7 +16,13 @@ const Dashboard = () => {
             <Link href="/movies/list" className={styles.button}>
                 View Movies
             </Link>
-        </div>
+            {user.getValue()?.user_type === 'manager' && <Link href="/theatre/add" className={styles.button}>
+                Create A Theatre
+            </Link>}
+            <Link href="/" className={styles.button} onClick={() => user.set(null)}>
+                Logout
+            </Link>
+        </PrivateRoute>
     );
 };
 

@@ -1,3 +1,6 @@
 import AddMovieForm from "./AddMovieForm";
+import PrivateRoute from "../../PrivateRoute";
 
-export default AddMovieForm
+const ProtectedRoute = () => <PrivateRoute><AddMovieForm /></PrivateRoute>
+
+export default ProtectedRoute

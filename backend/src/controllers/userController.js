@@ -1,7 +1,12 @@
 exports.getUsers = (req, res) => {
     const { connection } = req;
+    const query = `
+        SELECT User.username, User.name, User.surname, User.user_type, Director.nation, Director.platform_id
+        FROM User
+        LEFT JOIN Director ON User.username = Director.username
+    `;
 
-    connection.query('SELECT * FROM User', (err, results) => {
+    connection.query(query, (err, results) => {
         if (err) {
             console.error('Error executing the query: ', err);
             res.status(500).send('Internal Server Error');
@@ -12,21 +17,60 @@ exports.getUsers = (req, res) => {
     });
 };
 
-exports.createItem = (req, res) => {
+exports.loginUser = (req, res) => {
     const { connection } = req;
-    const { username, password, name, surname, user_type } = req.body;
-    const query = 'INSERT INTO User (username, password, name, surname, user_type) VALUES (?, ?, ?, ?, ?)';
-    const values = [username, password, name, surname, user_type];
+    const { username, password } = req.body;
 
-    connection.query(query, values, (err, result) => {
+    const query = 'SELECT * FROM User WHERE username = ? AND password = ?';
+    const values = [username, password];
+
+    connection.query(query, values, (err, results) => {
         if (err) {
             console.error('Error executing the query: ', err);
             res.status(500).send('Internal Server Error');
             return;
         }
 
-        console.log('New user inserted!');
-        res.send('User inserted successfully!');
+        if (results.length === 0) {
+            res.status(401).send('Invalid credentials');
+            return;
+        }
+
+        res.json(results);
+    });
+};
+
+exports.createItem = (req, res) => {
+    const { connection } = req;
+    const { username, password, name, surname, user_type, nation, platform_id } = req.body;
+    const userQuery = 'INSERT INTO User (username, password, name, surname, user_type) VALUES (?, ?, ?, ?, ?)';
+    const userValues = [username, password, name, surname, user_type];
+
+    connection.query(userQuery, userValues, (err, result) => {
+        if (err) {
+            console.error('Error executing the query: ', err);
+            res.status(500).send('Internal Server Error');
+            return;
+        }
+
+        if (user_type === 'director') {
+            const directorQuery = 'INSERT INTO Director (username, nation, platform_id) VALUES (?, ?, ?)';
+            const directorValues = [username, nation, platform_id];
+
+            connection.query(directorQuery, directorValues, (directorErr, directorResult) => {
+                if (directorErr) {
+                    console.error('Error creating director: ', directorErr);
+                    res.status(500).send('Internal Server Error');
+                    return;
+                }
+
+                console.log('New director created!');
+                res.send('Director created successfully!');
+            });
+        } else {
+            console.log('New user inserted!');
+            res.send('User inserted successfully!');
+        }
     });
 };
 

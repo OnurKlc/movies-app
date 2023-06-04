@@ -7,7 +7,7 @@ const connection = mysql.createConnection({
     host: 'localhost',
     user: 'root',
     password: '123456',
-    database: 'test'
+    database: 'moviesdb'
 });
 
 // Connect to MySQL
@@ -29,13 +29,17 @@ app.use((req, res, next) => {
 });
 
 // Routes
-// const indexRouter = require('./routes/index');
 const usersRouter = require('./routes/user');
-// const itemsRouter = require('./routes/items');
+const moviesRouter = require('./routes/movies');
+const platformsRouter = require('./routes/platforms');
+const genreRouter = require('./routes/genre');
+const theatreRouter = require('./routes/theatre');
 
-// app.use('/', indexRouter);
 app.use('/users', usersRouter);
-// app.use('/items', itemsRouter);
+app.use('/movies', moviesRouter);
+app.use('/platforms', platformsRouter);
+app.use('/genre', genreRouter);
+app.use('/theatres', theatreRouter);
 
 const port = 9000;
 app.listen(port, () => {

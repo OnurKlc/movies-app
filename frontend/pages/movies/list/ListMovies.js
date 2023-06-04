@@ -2,27 +2,36 @@ import { useRouter } from 'next/router';
 import styles from './ListMovies.module.css';
 import {GlobalContext} from "../../../core/context/GlobalContext";
 import Link from "next/link";
-import {useContext} from "react";
+import {useContext, useEffect} from "react";
 import {Table} from "antd";
+import axios from "axios";
 
 const ListMovies = () => {
     const router = useRouter();
-    const {moviesList} = useContext(GlobalContext);
+    const {user, movies} = useContext(GlobalContext);
     const director = router?.query?.director
 
-    const filteredMovies = moviesList.getValue().filter(
+    const filteredMovies = movies.get().filter(
         (movie) => director ? movie.director === director : true
     );
+
+    const deleteMovie = (val) => {
+        axios.delete(`http://localhost:9000/movies/${val}`).then(res => getMovies())
+    }
+
+    const getMovies = () => {
+        axios.get('http://localhost:9000/movies').then(res => movies.set(res.data))
+    }
 
     const columns = [
         {
             title: 'Movie Id',
-            dataIndex: 'movieId',
+            dataIndex: 'movie_id',
             key: 'id',
         },
         {
             title: 'Name',
-            dataIndex: 'movieName',
+            dataIndex: 'movie_name',
             key: 'name',
         },
         {
@@ -60,23 +69,23 @@ const ListMovies = () => {
             key: 'x',
             render: (_, record) => (
                 <>
-                    <a onClick={() => moviesList.deleteMovie(record.username)} className={styles.button}>Delete</a>
-                    <a onClick={() => router.push(`/user/update/${record.username}`)} className={styles.button}>Update</a>
-                    {record.userType === 'audience' && <a onClick={() => router.push(`/user/update/${record.username}`)} className={styles.button}>
-                        View user ratings</a>}
-                    {record.userType === 'director' && <a onClick={() => router.push(`/user/update/${record.username}`)} className={styles.button}>
-                        View movies of director</a>}
+                    <a onClick={() => deleteMovie(record.movie_id)} className={styles.button}>Delete</a>
+                    <a onClick={() => router.push(`/movies/update/${record.movie_id}`)} className={styles.button}>Update</a>
                 </>
             ),
         },
     ];
 
+    useEffect(() => {
+        getMovies()
+    }, [])
+
     return (
         <div>
             <h1>Movies List:</h1>
-            <Link href="/movies/add" className={styles.button}>
+            {user.getValue()?.user_type === 'director' && <Link href="/movies/add" className={styles.button}>
                 Add Movie
-            </Link>
+            </Link>}
             <Table dataSource={filteredMovies} columns={columns} />
         </div>
     );

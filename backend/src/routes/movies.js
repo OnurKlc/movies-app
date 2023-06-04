@@ -5,7 +5,7 @@ const router = express.Router();
 const moviesController = require('../controllers/moviesController');
 
 // Define routes
-router.get('/user', moviesController.getMovies);
+router.get('/', moviesController.getMovies);
 router.post('/create', moviesController.createItem);
 router.get('/:id', moviesController.getItem);
 router.put('/:id', moviesController.updateItem);

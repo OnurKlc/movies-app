@@ -9,6 +9,9 @@ export const UserProvider = ({ children }) => {
     const [user, setUser] = useState(null);
     const [users, setUsers] = useState([]);
     const [movies, setMovies] = useState([]);
+    const [platforms, setPlatforms] = useState([]);
+    const [genres, setGenres] = useState([]);
+    const [theatres, setTheatres] = useState([]);
 
     const values = {
         user: {
@@ -39,9 +42,12 @@ export const UserProvider = ({ children }) => {
                 setUsers([...users])
             }
         },
-        moviesList: {
-            getValue() {
+        movies: {
+            get() {
                 return movies
+            },
+            set(val) {
+                setMovies(val)
             },
             addMovie(val) {
                 setMovies([...movies, val])
@@ -51,6 +57,30 @@ export const UserProvider = ({ children }) => {
             },
             getSingleMovie(val) {
                 return movies.find((movie) => movie.name === val)
+            }
+        },
+        platforms: {
+            get() {
+                return platforms
+            },
+            set(val) {
+                setPlatforms(val)
+            }
+        },
+        genres: {
+            get() {
+                return genres
+            },
+            set(val) {
+                setGenres(val)
+            }
+        },
+        theatres: {
+            get() {
+                return theatres
+            },
+            set(val) {
+                setTheatres(val)
             }
         }
     }

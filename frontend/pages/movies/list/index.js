@@ -1,3 +1,6 @@
 import ListMovies from "./ListMovies";
+import PrivateRoute from "../../PrivateRoute";
 
-export default ListMovies
+const ProtectedRoute = () => <PrivateRoute><ListMovies /></PrivateRoute>
+
+export default ProtectedRoute

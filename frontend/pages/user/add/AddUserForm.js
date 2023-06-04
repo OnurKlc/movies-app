@@ -1,8 +1,8 @@
-import {useContext, useState} from 'react';
+import {useContext, useEffect, useState} from 'react';
 import { useRouter } from 'next/router';
 import styles from './AddUserForm.module.css';
-import {GlobalContext} from "../../../core/context/GlobalContext";
 import axios from "axios";
+import PrivateRoute from "../../PrivateRoute";
 
 const AddUserForm = () => {
     const router = useRouter();
@@ -13,7 +13,20 @@ const AddUserForm = () => {
     const [userType, setUserType] = useState('');
     const [nation, setNation] = useState('');
     const [platform, setPlatform] = useState('');
-    const {usersList} = useContext(GlobalContext);
+    const [platforms, setPlatforms] = useState([]);
+
+    useEffect(() => {
+        fetchPlatforms();
+    }, []);
+
+    const fetchPlatforms = async () => {
+        try {
+            const response = await axios.get('http://localhost:9000/platforms');
+            setPlatforms(response.data);
+        } catch (error) {
+            console.error('Error fetching platforms:', error);
+        }
+    };
 
     const handleSubmit = (e) => {
         e.preventDefault();
@@ -23,10 +36,13 @@ const AddUserForm = () => {
             password,
             name,
             surname,
-            nation,
             user_type: userType,
-            platform_id: platform
         };
+
+        if (userType === 'director') {
+            newUser.platform_id = platform
+            newUser.nation = nation
+        }
 
         axios.post('http://localhost:9000/users/create', newUser)
 
@@ -42,6 +58,7 @@ const AddUserForm = () => {
     };
 
     return (
+        <PrivateRoute>
         <div className={styles.addUserForm}>
             <h2>Add New User</h2>
             <form onSubmit={handleSubmit}>
@@ -89,22 +106,24 @@ const AddUserForm = () => {
                         <option value="audience">Audience</option>
                     </select>
                 </div>
-                <div className={styles.formGroup}>
+                {userType === 'director' && <div className={styles.formGroup}>
                     <label htmlFor="nation">Nation:</label>
                     <input type="text" id="nation" value={nation} onChange={(e) => setNation(e.target.value)} />
-                </div>
-                <div className={styles.formGroup}>
+                </div>}
+                {userType === 'director' && <div className={styles.formGroup}>
                     <label htmlFor="platform">Platform:</label>
-                    <select id="platform" value={platform} onChange={(e) => setPlatform(e.target.value)}>
-                        <option value="">Select Platform</option>
-                        <option value="10130">IMDB</option>
-                        <option value="10131">Letterboxd</option>
-                        <option value="10132">FilmIzle</option>
+                    <select onChange={(e) => setPlatform(e.target.value)}>
+                        {platforms.map(platform => (
+                            <option key={platform.platform_id} value={platform.platform_id}>
+                                {platform.platform_name}
+                            </option>
+                        ))}
                     </select>
-                </div>
+                </div>}
                 <button type="submit" className={styles.addButton}>Add User</button>
             </form>
         </div>
+        </PrivateRoute>
     );
 };
 

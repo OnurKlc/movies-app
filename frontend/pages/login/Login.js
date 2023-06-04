@@ -2,6 +2,7 @@ import {useContext, useState} from 'react';
 import { useRouter } from 'next/router';
 import styles from './Login.module.css';
 import {GlobalContext} from "../../core/context/GlobalContext";
+import axios from "axios";
 
 const Login = () => {
     const [username, setUsername] = useState('');
@@ -10,7 +11,7 @@ const Login = () => {
     const {user} = useContext(GlobalContext)
 
     const handleLogin = () => {
-        user.set(true)
+        axios.post('http://localhost:9000/users/login', {username, password}).then(res => user.set(res.data[0]))
         router.push('/dashboard');
     };
 

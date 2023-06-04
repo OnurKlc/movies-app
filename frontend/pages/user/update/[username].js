@@ -2,6 +2,7 @@ import {useContext, useState} from 'react';
 import { useRouter } from 'next/router';
 import styles from './UpdateUser.module.css';
 import {GlobalContext} from "../../../core/context/GlobalContext";
+import PrivateRoute from "../../PrivateRoute";
 
 const UpdateUser = () => {
     const router = useRouter();
@@ -43,6 +44,7 @@ const UpdateUser = () => {
     };
 
     return (
+        <PrivateRoute>
         <div className={styles.addUserForm}>
             <h2>Update User</h2>
             <form onSubmit={handleSubmit}>
@@ -107,6 +109,7 @@ const UpdateUser = () => {
                 <button type="submit" className={styles.addButton}>Update User</button>
             </form>
         </div>
+        </PrivateRoute>
     );
 };
 

@@ -1,20 +1,22 @@
-import {useContext, useState} from 'react';
+import {useContext, useEffect, useState} from 'react';
 import { useRouter } from 'next/router';
 import styles from "./AddMovieForm.module.css";
-import {GlobalContext} from "../../../core/context/GlobalContext";
 import axios from "axios";
+import {GlobalContext} from "../../../core/context/GlobalContext";
+import { Select } from 'antd';
+const { Option } = Select;
 
 const AddMovie = () => {
     const router = useRouter();
-    const {moviesList} = useContext(GlobalContext)
+    const {user, genres, theatres, movies} = useContext(GlobalContext)
     const [movieData, setMovieData] = useState({
-        movie_id: '',
         movie_name: '',
-        director: '',
-        theatreId: '',
-        timeSlot: '',
+        theatre_id: '',
+        timeslot: '',
         duration: '',
-        date: ''
+        date: '',
+        genres: '',
+        predecessor_id: ''
     });
 
     const handleInputChange = (e) => {
@@ -25,37 +27,46 @@ const AddMovie = () => {
     const handleSubmit = (e) => {
         e.preventDefault();
 
-        moviesList.addMovie(movieData);
+        movieData.director = user.getValue().username
+        movieData.platform_id = user.getValue().platform_id
+
         axios.post('http://localhost:9000/movies/create', movieData)
 
         setMovieData({
-            movie_id: '',
             movie_name: '',
-            director: '',
-            theatreId: '',
-            timeSlot: '',
+            theatre_id: '',
+            timeslot: '',
             duration: '',
-            date: ''
+            date: '',
+            genres: '',
+            predecessor_id: ''
         });
 
-        // Redirect to the desired page (e.g., movie list page)
         router.push('/movies/list');
     };
+
+    const getGenres = () => {
+        axios.get('http://localhost:9000/genre').then(res => genres.set(res.data))
+    }
+
+    const getTheatres = () => {
+        axios.get('http://localhost:9000/theatres').then(res => theatres.set(res.data))
+    }
+
+    const getMovies = () => {
+        axios.get('http://localhost:9000/movies').then(res => movies.set(res.data))
+    }
+
+    useEffect(() => {
+        getGenres()
+        getTheatres()
+        getMovies()
+    }, [])
 
     return (
         <div className={styles.addMovieForm}>
             <h1>Add Movie</h1>
             <form onSubmit={handleSubmit}>
-                <div className={styles.formGroup}>
-                    <label htmlFor="movie_id">Movie ID:</label>
-                    <input
-                        type="text"
-                        id="movie_id"
-                        name="movie_id"
-                        value={movieData.movie_id}
-                        onChange={handleInputChange}
-                    />
-                </div>
                 <div className={styles.formGroup}>
                     <label htmlFor="movie_name">Movie Name:</label>
                     <input
@@ -67,32 +78,25 @@ const AddMovie = () => {
                     />
                 </div>
                 <div className={styles.formGroup}>
-                    <label htmlFor="director">Director:</label>
-                    <input
-                        type="text"
-                        id="director"
-                        name="director"
-                        value={movieData.director}
-                        onChange={handleInputChange}
-                    />
+                    <label htmlFor="theatre_id">Theatre ID:</label>
+                    <Select
+                        className={styles.antSelect}
+                        onChange={(value) => setMovieData({ ...movieData, theatre_id: value })}
+                    >
+                        {theatres.get().map(theatre => (
+                            <Option key={theatre.theatre_id} value={theatre.theatre_id}>
+                                {theatre.name}
+                            </Option>
+                        ))}
+                    </Select>
                 </div>
                 <div className={styles.formGroup}>
-                    <label htmlFor="theatreId">Theatre ID:</label>
+                    <label htmlFor="timeslot">Time Slot:</label>
                     <input
                         type="text"
-                        id="theatreId"
-                        name="theatreId"
-                        value={movieData.theatreId}
-                        onChange={handleInputChange}
-                    />
-                </div>
-                <div className={styles.formGroup}>
-                    <label htmlFor="timeSlot">Time Slot:</label>
-                    <input
-                        type="text"
-                        id="timeSlot"
-                        name="timeSlot"
-                        value={movieData.timeSlot}
+                        id="timeslot"
+                        name="timeslot"
+                        value={movieData.timeslot}
                         onChange={handleInputChange}
                     />
                 </div>
@@ -115,6 +119,34 @@ const AddMovie = () => {
                         value={movieData.date}
                         onChange={handleInputChange}
                     />
+                </div>
+                <div className={styles.formGroup}>
+                    <label htmlFor="platform">Genre:</label>
+                    <Select
+                        className={styles.antSelect}
+                        mode="multiple"
+                        onChange={(value) => setMovieData({ ...movieData, genres: value })}
+                    >
+                        {genres.get().map(genre => (
+                            <Option key={genre.genre_id} value={genre.genre_id}>
+                                {genre.genre_name}
+                            </Option>
+                        ))}
+                    </Select>
+                </div>
+                <div className={styles.formGroup}>
+                    <label htmlFor="platform">Predecessor:</label>
+                    <Select
+                        className={styles.antSelect}
+                        mode="multiple"
+                        onChange={(value) => setMovieData({ ...movieData, predecessor_id: value })}
+                    >
+                        {movies.get().map(movie => (
+                            <Option key={movie.movie_id} value={movie.movie_id}>
+                                {movie.movie_name}
+                            </Option>
+                        ))}
+                    </Select>
                 </div>
                 <button type="submit" className={styles.addButton}>Add Movie</button>
             </form>
