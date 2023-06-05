@@ -31,6 +31,13 @@
     border-radius: 4px;
 }
 
+.antSelect, .antPicker {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
 .addButton {
     padding: 10px 20px;
     background-color: #007bff;

@@ -177,3 +177,4 @@ exports.getUserMovies = (req, res) => {
         res.json(result);
     });
 }
+

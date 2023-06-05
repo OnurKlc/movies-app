@@ -69,8 +69,10 @@ const ListMovies = () => {
             key: 'x',
             render: (_, record) => (
                 <>
-                    <a onClick={() => deleteMovie(record.movie_id)} className={styles.button}>Delete</a>
-                    <a onClick={() => router.push(`/movies/update/${record.movie_id}`)} className={styles.button}>Update</a>
+                    {user.get()?.user_type !== 'audience' &&
+                        <a onClick={() => deleteMovie(record.movie_id)} className={styles.button}>Delete</a>}
+                    {user.get()?.user_type !== 'audience' && <a onClick={() => router.push(`/movies/update/${record.movie_id}`)}
+                        className={styles.button}>Update</a>}
                     {user.get()?.user_type === 'audience' && (
                         <a onClick={() => router.push(`/movies/rate/${record.movie_id}`)} className={styles.button}>
                             Rate This Movie

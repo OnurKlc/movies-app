@@ -1,9 +1,11 @@
 exports.getUsers = (req, res) => {
     const { connection } = req;
     const query = `
-        SELECT User.username, User.name, User.surname, User.user_type, Director.nation, Director.platform_id
+        SELECT User.username, User.name, User.surname, User.user_type, Director.nation, Director.platform_id, GROUP_CONCAT(Audience_Platform.platform_id) AS platform_ids
         FROM User
         LEFT JOIN Director ON User.username = Director.username
+        LEFT JOIN Audience_Platform ON User.username = Audience_Platform.username
+        GROUP BY User.username, User.name, User.surname, User.user_type, Director.nation, Director.platform_id
     `;
 
     connection.query(query, (err, results) => {
@@ -78,7 +80,13 @@ exports.getItem = (req, res) => {
     const { connection } = req;
     const { username } = req.params;
 
-    const query = 'SELECT * FROM User WHERE username = ?';
+    const query = `
+        SELECT User.username, User.name, User.surname, User.user_type, Director.nation, Director.platform_id
+        FROM User
+        LEFT JOIN Director ON User.username = Director.username
+        WHERE User.username = ?
+    `;
+
     const values = [username];
 
     connection.query(query, values, (err, results) => {
@@ -99,15 +107,15 @@ exports.getItem = (req, res) => {
 
 exports.updateItem = (req, res) => {
     const { connection } = req;
-    const { id } = req.params;
-    const { username, password, name, surname, user_type } = req.body;
+    const { username } = req.params;
+    const { platform_id } = req.body;
 
-    const query = 'UPDATE User SET username = ?, password = ?, name = ?, surname = ?, user_type = ? WHERE id = ?';
-    const values = [username, password, name, surname, user_type, id];
+    const query = 'UPDATE Director SET platform_id = ? WHERE username = ?';
+    const values = [platform_id, username];
 
     connection.query(query, values, (err, result) => {
         if (err) {
-            console.error('Error executing the query: ', err);
+            console.error('Error updating director: ', err);
             res.status(500).send('Internal Server Error');
             return;
         }
@@ -117,8 +125,7 @@ exports.updateItem = (req, res) => {
             return;
         }
 
-        console.log('User updated!');
-        res.send('User updated successfully!');
+        res.send('Director updated successfully!');
     });
 };
 
@@ -144,4 +151,42 @@ exports.deleteItem = (req, res) => {
         console.log('User deleted!');
         res.send('User deleted successfully!');
     });
+};
+
+exports.subscribeToPlatform = (req, res) => {
+    const { connection } = req;
+    let { username, platform_id } = req.body;
+
+    const deleteQuery = 'DELETE FROM Audience_Platform WHERE username = ?';
+    const deleteValues = [username];
+
+    connection.query(deleteQuery, deleteValues, (error) => {
+        if (error) {
+            console.error('Error:', error);
+            return res.status(500).json({ message: 'Fail' });
+        }
+
+        const queries = platform_id.map((platform_id) => [
+            'INSERT INTO Audience_Platform (username, platform_id) VALUES (?, ?)',
+            [username, platform_id],
+        ]);
+
+        const executeQueries = () => {
+            if (queries.length === 0) {
+                return res.status(200).json({ message: 'Success' });
+            }
+
+            const [query, values] = queries.shift();
+            connection.query(query, values, (error) => {
+                if (error) {
+                    console.error('Error:', error);
+                    return res.status(500).json({ message: 'Fail' });
+                }
+
+                executeQueries();
+            });
+        };
+
+        executeQueries();
+    })
 };

@@ -1,9 +1,11 @@
 import styles from "./platforms.module.css";
 import {Select} from "antd";
-import {useEffect, useState} from "react";
+import {useContext, useEffect, useState} from "react";
 import axios from "axios";
+import {GlobalContext} from "../../core/context/GlobalContext";
 
 export default function SubscribeToPlatforms() {
+    const {user} = useContext(GlobalContext);
     const [platforms, setPlatforms] = useState([]);
     const [submitData, setSubmitData] = useState([]);
 
@@ -22,7 +24,11 @@ export default function SubscribeToPlatforms() {
 
     const submitSubscriptions = () => {
         console.log(submitData)
-        axios.post('http://localhost:9000/user/subscribe')
+        axios.post('http://localhost:9000/users/subscribe',
+            {
+                platform_id: submitData,
+                username: user.get()?.username
+            })
     }
 
     return (

@@ -61,10 +61,14 @@ const ListUsers = () => {
             key: 'user_type',
         },
         {
-            title: 'Platform',
+            title: 'Platform Id',
             dataIndex: 'platform',
             key: 'platform_id',
-            render: (_, record) => <span>{platforms.get().length && platforms.get().find(x => x.platform_id === record.platform_id)?.platform_name}</span>
+            render: (_, record) => (
+                <span>
+                    {record.user_type === 'director' ? record.platform_id : record.platform_ids}
+                </span>
+            )
         },
         {
             title: 'Action',
@@ -72,8 +76,8 @@ const ListUsers = () => {
             key: 'x',
             render: (_, record) => (
                 <>
-                    {record.user_type !== 'manager' && <a onClick={() => deleteUser(record.username)} className={styles.button}>Delete</a>}
-                    {record.user_type !== 'manager' && <a onClick={() => router.push(`/user/update/${record.username}`)}
+                    {record.user_type !== 'manager' && user.get()?.user_type === 'manager' && <a onClick={() => deleteUser(record.username)} className={styles.button}>Delete</a>}
+                    {record.user_type === 'director' && user.get()?.user_type === 'manager' && <a onClick={() => router.push(`/user/update/${record.username}`)}
                                                           className={styles.button}>Update</a>}
                     {record.user_type === 'audience' && user.get()?.user_type === 'manager' && (
                         <a
