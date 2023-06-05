@@ -75,9 +75,14 @@ const ListUsers = () => {
                     {record.user_type !== 'manager' && <a onClick={() => deleteUser(record.username)} className={styles.button}>Delete</a>}
                     {record.user_type !== 'manager' && <a onClick={() => router.push(`/user/update/${record.username}`)}
                                                           className={styles.button}>Update</a>}
-                    {record.userType === 'audience' && <a onClick={() => router.push(`/movies/list/${record.username}`)} className={styles.button}>
-                        View user ratings</a>}
-                    {record.userType === 'director' && <a onClick={() => router.push({pathname: `/movies/list/`, query: { director: `${record.username}` }})} className={styles.button}>
+                    {record.user_type === 'audience' && user.get()?.user_type === 'manager' && (
+                        <a
+                            onClick={() => router.push(`/movies/rated/${record.username}`)}
+                            className={styles.button}
+                        >
+                            View user ratings
+                        </a>)}
+                    {record.user_type === 'director' && <a onClick={() => router.push({pathname: `/movies/list/`, query: { director: `${record.username}` }})} className={styles.button}>
                         View movies of director</a>}
                 </>
             ),
@@ -93,7 +98,7 @@ const ListUsers = () => {
         <PrivateRoute>
         <div className={styles.listUsers}>
             <h1>Users List:</h1>
-            {user.getValue()?.user_type === 'manager' && <Link href="/user/add" className={styles.button}>
+            {user.get()?.user_type === 'manager' && <Link href="/user/add" className={styles.button}>
                 Add User
             </Link>}
             <div className={styles.filterContainer}>

@@ -41,8 +41,8 @@ const ListMovies = () => {
         },
         {
             title: 'Theatre Id',
-            dataIndex: 'theatreId',
-            key: 'theatreId',
+            dataIndex: 'theatre_id',
+            key: 'theatre_id',
         },
         {
             title: 'Avg Rating',
@@ -51,8 +51,8 @@ const ListMovies = () => {
         },
         {
             title: 'Time Slot',
-            dataIndex: 'timeSlot',
-            key: 'timeSlot',
+            dataIndex: 'timeslot',
+            key: 'timeslot',
         },
         {
             title: 'Duration',
@@ -71,7 +71,11 @@ const ListMovies = () => {
                 <>
                     <a onClick={() => deleteMovie(record.movie_id)} className={styles.button}>Delete</a>
                     <a onClick={() => router.push(`/movies/update/${record.movie_id}`)} className={styles.button}>Update</a>
-                    <a onClick={() => router.push(`/movies/rate/${record.movie_id}`)} className={styles.button}>Rate This Movie</a>
+                    {user.get()?.user_type === 'audience' && (
+                        <a onClick={() => router.push(`/movies/rate/${record.movie_id}`)} className={styles.button}>
+                            Rate This Movie
+                        </a>
+                    )}
                 </>
             ),
         },
@@ -84,7 +88,7 @@ const ListMovies = () => {
     return (
         <div>
             <h1>Movies List:</h1>
-            {user.getValue()?.user_type === 'director' && <Link href="/movies/add" className={styles.button}>
+            {user.get()?.user_type === 'director' && <Link href="/movies/add" className={styles.button}>
                 Add Movie
             </Link>}
             <Table dataSource={filteredMovies} columns={columns} />

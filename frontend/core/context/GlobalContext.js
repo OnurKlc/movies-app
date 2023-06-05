@@ -1,4 +1,4 @@
-import { createContext, useState } from 'react';
+import {createContext, useEffect, useState} from 'react';
 
 export const GlobalContext = createContext();
 
@@ -10,9 +10,14 @@ export const UserProvider = ({ children }) => {
     const [genres, setGenres] = useState([]);
     const [theatres, setTheatres] = useState([]);
 
+    useEffect(() => {
+        const userSession = JSON.parse(localStorage.getItem('user'))
+        setUser(userSession)
+    }, [])
+
     const values = {
         user: {
-            getValue() {
+            get() {
                 return user
             },
             set(val) {
@@ -24,19 +29,8 @@ export const UserProvider = ({ children }) => {
                 return users
             },
             setUsers,
-            addUser(val) {
-                setUsers([...users, val])
-            },
-            deleteUser(val) {
-                setUsers((prevUsers) => prevUsers.filter((user) => user.username !== val));
-            },
             getSingleUser(val) {
                 return users.find((user) => user.username === val)
-            },
-            updateUser(newUser) {
-                const idx = users.findIndex((user) => user.username === newUser.username)
-                users[idx] = newUser
-                setUsers([...users])
             }
         },
         movies: {
@@ -45,15 +39,6 @@ export const UserProvider = ({ children }) => {
             },
             set(val) {
                 setMovies(val)
-            },
-            addMovie(val) {
-                setMovies([...movies, val])
-            },
-            deleteMovie(val) {
-                setMovies((prevMovies) => prevMovies.filter((movie) => movie.name !== val));
-            },
-            getSingleMovie(val) {
-                return movies.find((movie) => movie.name === val)
             }
         },
         platforms: {

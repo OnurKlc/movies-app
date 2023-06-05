@@ -8,6 +8,7 @@ const moviesController = require('../controllers/moviesController');
 router.get('/', moviesController.getMovies);
 router.post('/create', moviesController.createItem);
 router.get('/:id', moviesController.getItem);
+router.get('/rated/:username', moviesController.getUserMovies);
 router.put('/:id', moviesController.updateItem);
 router.delete('/:id', moviesController.deleteItem);
 

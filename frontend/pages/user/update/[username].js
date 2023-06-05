@@ -29,8 +29,6 @@ const UpdateUser = () => {
             platform
         };
 
-        usersList.updateUser(newUser);
-
         // Reset the form fields
         setUsername('');
         setPassword('');

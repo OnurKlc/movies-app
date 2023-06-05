@@ -8,14 +8,14 @@ const Layout = () => {
     const {user} = useContext(GlobalContext)
     const router = useRouter()
 
-    if (!user.getValue() && router.pathname !== '/') {
+    if (!user.get() && router.pathname !== '/') {
         router.push('/');
         return null;
     }
 
     return (
         <div>
-            {user.getValue() ? (
+            {user.get() ? (
                 <DashboardPage />
             ) : (
                 <LoginPage />

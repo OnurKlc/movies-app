@@ -35,6 +35,7 @@ const platformsRouter = require('./routes/platforms');
 const genreRouter = require('./routes/genre');
 const theatreRouter = require('./routes/theatre');
 const ratingRouter = require('./routes/rating');
+const ticketsRouter = require('./routes/tickets');
 
 app.use('/users', usersRouter);
 app.use('/movies', moviesRouter);
@@ -42,6 +43,7 @@ app.use('/platforms', platformsRouter);
 app.use('/genre', genreRouter);
 app.use('/theatres', theatreRouter);
 app.use('/rating', ratingRouter);
+app.use('/tickets', ticketsRouter);
 
 const port = 9000;
 app.listen(port, () => {

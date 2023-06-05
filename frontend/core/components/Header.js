@@ -9,10 +9,11 @@ const Header = () => {
 
     return (
         <header className={'header'}>
-            {user.getValue() && <>
+            {user.get() && <>
                 <Link href={'/'}>Homepage</Link>
                 <button onClick={() => {
                     user.set(null)
+                    localStorage.removeItem('user')
                     router.push('/');
                 }}>
                     Logout

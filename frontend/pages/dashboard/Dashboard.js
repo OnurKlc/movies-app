@@ -16,8 +16,14 @@ const Dashboard = () => {
             <Link href="/movies/list" className={styles.button}>
                 View Movies
             </Link>
-            {user.getValue()?.user_type === 'manager' && <Link href="/theatre/add" className={styles.button}>
+            {user.get()?.user_type === 'audience' && <Link href="/tickets/list" className={styles.button}>
+                View Tickets
+            </Link>}
+            {user.get()?.user_type === 'manager' && <Link href="/theatre/add" className={styles.button}>
                 Create A Theatre
+            </Link>}
+            {user.get()?.user_type === 'audience' && <Link href="/platforms" className={styles.button}>
+                Subscribe to platforms
             </Link>}
         </PrivateRoute>
     );

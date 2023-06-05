@@ -3,6 +3,8 @@ import { useRouter } from 'next/router';
 import styles from './AddUserForm.module.css';
 import axios from "axios";
 import PrivateRoute from "../../PrivateRoute";
+import {Select} from "antd";
+const {Option} = Select;
 
 const AddUserForm = () => {
     const router = useRouter();
@@ -100,11 +102,10 @@ const AddUserForm = () => {
                 </div>
                 <div className={styles.formGroup}>
                     <label htmlFor="userType">User Type:</label>
-                    <select id="userType" value={userType} onChange={(e) => setUserType(e.target.value)}>
-                        <option value="">Select User Type</option>
-                        <option value="director">Director</option>
-                        <option value="audience">Audience</option>
-                    </select>
+                    <Select className={styles.antSelect} id="userType" value={userType} onChange={(val) => setUserType(val)}>
+                        <Option value="director">Director</Option>
+                        <Option value="audience">Audience</Option>
+                    </Select>
                 </div>
                 {userType === 'director' && <div className={styles.formGroup}>
                     <label htmlFor="nation">Nation:</label>
@@ -112,13 +113,13 @@ const AddUserForm = () => {
                 </div>}
                 {userType === 'director' && <div className={styles.formGroup}>
                     <label htmlFor="platform">Platform:</label>
-                    <select onChange={(e) => setPlatform(e.target.value)}>
+                    <Select className={styles.antSelect} onChange={(val) => setPlatform(val)}>
                         {platforms.map(platform => (
-                            <option key={platform.platform_id} value={platform.platform_id}>
+                            <Option key={platform.platform_id} value={platform.platform_id}>
                                 {platform.platform_name}
-                            </option>
+                            </Option>
                         ))}
-                    </select>
+                    </Select>
                 </div>}
                 <button type="submit" className={styles.addButton}>Add User</button>
             </form>

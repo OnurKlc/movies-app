@@ -11,7 +11,10 @@ const Login = () => {
     const {user} = useContext(GlobalContext)
 
     const handleLogin = () => {
-        axios.post('http://localhost:9000/users/login', {username, password}).then(res => user.set(res.data[0]))
+        axios.post('http://localhost:9000/users/login', {username, password}).then(res => {
+            localStorage.setItem('user', JSON.stringify(res.data[0]))
+            user.set(res.data[0])
+        })
         router.push('/dashboard');
     };
 

@@ -16,7 +16,8 @@ exports.getMovies = (req, res) => {
 
 exports.createItem = (req, res) => {
     const { connection } = req;
-    const { director, movie_name, duration, theatre_id, avg_rating, predecessor_id, genres, timeslot, date } = req.body;
+    let { director, movie_name, duration, theatre_id, avg_rating, predecessor_id, genres, timeslot, date } = req.body;
+    predecessor_id = predecessor_id || null
 
     const movieQuery = 'INSERT INTO Movie (director, movie_name, duration, theatre_id, avg_rating, predecessor_id, timeslot, date) VALUES (?, ?, ?, ?, ?, ?, ?, ?)';
     connection.query(movieQuery, [director, movie_name, duration, theatre_id, avg_rating, predecessor_id, timeslot, date], (error, results) => {
@@ -153,3 +154,26 @@ exports.deleteItem = (req, res) => {
         res.send('Movie deleted successfully!');
     });
 };
+
+exports.getUserMovies = (req, res) => {
+    const { connection } = req;
+    const { username } = req.params;
+
+    const query = `
+        SELECT r.movie_id, m.movie_name, r.rating_value
+        FROM Rating r
+        JOIN Movie m ON r.movie_id = m.movie_id
+        WHERE r.username = ?;
+    `;
+    const values = [username];
+
+    connection.query(query, values, (err, result) => {
+        if (err) {
+            console.error('Error executing the query: ', err);
+            res.status(500).send('Internal Server Error');
+            return;
+        }
+
+        res.json(result);
+    });
+}

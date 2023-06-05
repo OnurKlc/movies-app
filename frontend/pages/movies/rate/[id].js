@@ -15,7 +15,7 @@ const RateMovie = () => {
         setRating(rating_value)
         axios.post('http://localhost:9000/rating/rate', {
             rating_value,
-            username: user.getValue()?.username,
+            username: user.get()?.username,
             movie_id: router?.query?.id
         })
             .then(res => console.log(res))
@@ -29,7 +29,7 @@ const RateMovie = () => {
     }
 
     const getRating = () => {
-        axios.get(`http://localhost:9000/rating/${router?.query?.id}/${user.getValue()?.username}`)
+        axios.get(`http://localhost:9000/rating/${router?.query?.id}/${user.get()?.username}`)
             .then(res => setRating(res.data[0].rating_value))
     }
 

@@ -32,8 +32,8 @@ const UpdateMovie = () => {
     const handleSubmit = (e) => {
         e.preventDefault();
 
-        movieData.director = user.getValue().username
-        movieData.platform_id = user.getValue().platform_id
+        movieData.director = user.get()?.username
+        movieData.platform_id = user.get()?.platform_id
 
         axios.put(`http://localhost:9000/movies/${movieData.movie_id}`, movieData)
 

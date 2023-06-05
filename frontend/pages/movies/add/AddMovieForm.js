@@ -1,9 +1,11 @@
 import {useContext, useEffect, useState} from 'react';
 import { useRouter } from 'next/router';
+import dayjs from 'dayjs';
+import 'dayjs/locale/en';
 import styles from "./AddMovieForm.module.css";
 import axios from "axios";
 import {GlobalContext} from "../../../core/context/GlobalContext";
-import { Select } from 'antd';
+import { Select, DatePicker } from 'antd';
 const { Option } = Select;
 
 const AddMovie = () => {
@@ -14,7 +16,7 @@ const AddMovie = () => {
         theatre_id: '',
         timeslot: '',
         duration: '',
-        date: '',
+        date: dayjs(),
         genres: '',
         predecessor_id: ''
     });
@@ -27,8 +29,8 @@ const AddMovie = () => {
     const handleSubmit = (e) => {
         e.preventDefault();
 
-        movieData.director = user.getValue().username
-        movieData.platform_id = user.getValue().platform_id
+        movieData.director = user.get()?.username
+        movieData.platform_id = user.get()?.platform_id
 
         axios.post('http://localhost:9000/movies/create', movieData)
 
@@ -78,7 +80,7 @@ const AddMovie = () => {
                     />
                 </div>
                 <div className={styles.formGroup}>
-                    <label htmlFor="theatre_id">Theatre ID:</label>
+                    <label htmlFor="theatre_id">Theatre:</label>
                     <Select
                         className={styles.antSelect}
                         onChange={(value) => setMovieData({ ...movieData, theatre_id: value })}
@@ -91,34 +93,43 @@ const AddMovie = () => {
                     </Select>
                 </div>
                 <div className={styles.formGroup}>
+                    <label htmlFor="date">Date:</label>
+                    <DatePicker
+                        id="date"
+                        name="date"
+                        className={styles.antPicker}
+                        value={dayjs(movieData.date)}
+                        onChange={(date, dateString) => setMovieData({ ...movieData, date: dateString })}
+                    />
+                </div>
+                <div className={styles.formGroup}>
                     <label htmlFor="timeslot">Time Slot:</label>
-                    <input
-                        type="text"
+                    <Select
                         id="timeslot"
+                        className={styles.antSelect}
                         name="timeslot"
                         value={movieData.timeslot}
-                        onChange={handleInputChange}
-                    />
+                        onChange={(value) => setMovieData({ ...movieData, timeslot: value })}
+                    >
+                        <Option value="1">Slot 1</Option>
+                        <Option value="2">Slot 2</Option>
+                        <Option value="3">Slot 3</Option>
+                        <Option value="4">Slot 4</Option>
+                    </Select>
                 </div>
                 <div className={styles.formGroup}>
                     <label htmlFor="duration">Duration:</label>
-                    <input
-                        type="text"
+                    <Select
                         id="duration"
+                        className={styles.antSelect}
                         name="duration"
                         value={movieData.duration}
-                        onChange={handleInputChange}
-                    />
-                </div>
-                <div className={styles.formGroup}>
-                    <label htmlFor="date">Date:</label>
-                    <input
-                        type="text"
-                        id="date"
-                        name="date"
-                        value={movieData.date}
-                        onChange={handleInputChange}
-                    />
+                        onChange={(value) => setMovieData({ ...movieData, duration: value })}
+                    >
+                        <Option value="1">1 slot</Option>
+                        <Option value="2">2 slots</Option>
+                        <Option value="3">3 slots</Option>
+                    </Select>
                 </div>
                 <div className={styles.formGroup}>
                     <label htmlFor="platform">Genre:</label>
