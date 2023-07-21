@@ -1,14 +1,20 @@
 const express = require('express');
 const mysql = require('mysql2');
+const cors = require('cors')
+const env = require('dotenv')
 const bodyParser = require('body-parser');
+
+env.config({path: './.env'})
 
 // Create MySQL connection
 const connection = mysql.createConnection({
     host: 'localhost',
     user: 'root',
-    password: '123456',
+    password: process.env.SQL_PASSWORD,
     database: 'moviesdb'
 });
+
+console.log("ANANANANAN", process.env.SQL_PASSWORD)
 
 // Connect to MySQL
 connection.connect((err) => {
@@ -21,6 +27,7 @@ connection.connect((err) => {
 
 // Create Express app
 const app = express();
+app.use(cors());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use((req, res, next) => {

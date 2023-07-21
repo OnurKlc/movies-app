@@ -1,0 +1,10 @@
+{
+  "name": "movies",
+  "version": "0.1",
+  "scripts": {
+    "install:fe": "cd frontend && npm i",
+    "install:be": "cd backend && npm i",
+    "start:fe": "cd frontend && npm run dev",
+    "start:be": "cd backend && npm run start"
+  }
+}
