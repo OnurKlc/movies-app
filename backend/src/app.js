@@ -14,8 +14,6 @@ const connection = mysql.createConnection({
     database: 'moviesdb'
 });
 
-console.log("ANANANANAN", process.env.SQL_PASSWORD)
-
 // Connect to MySQL
 connection.connect((err) => {
     if (err) {
